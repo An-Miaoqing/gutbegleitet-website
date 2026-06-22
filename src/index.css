@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Nunito", ui-sans-serif, system-ui, sans-serif;
+  --font-script: "Caveat", cursive;
+
+  --font-family-script: var(--font-script);
+
+  --color-teal: #0f8b8d;
+  --color-teal-dark: #0a6b6d;
+  --color-teal-light: #e6f5f5;
+  --color-orange: #f28c28;
+  --color-orange-dark: #d97706;
+  --color-orange-light: #fef3e6;
+  --color-beige: #faf7f2;
+  --color-beige-dark: #f0ebe3;
+  --color-grey-soft: #6b7280;
+  --color-grey-light: #e8e4df;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-beige font-sans text-lg text-gray-800 antialiased;
+}
+
+.font-script {
+  font-family: var(--font-script);
+}
+
+:focus-visible {
+  @apply outline-2 outline-offset-2 outline-teal;
+}
