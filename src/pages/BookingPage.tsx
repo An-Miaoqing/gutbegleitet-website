@@ -1,4 +1,6 @@
 import { useMemo, useState, type FormEvent } from "react";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
 import PageHero from "../components/PageHero";
 import { ServiceIcon } from "../components/icons";
 import type { AvailabilitySlot, BookingDuration, BookingFormData, BookingService, BookingStep } from "../types/booking";
@@ -55,12 +57,41 @@ const durations: BookingDuration[] = [
   { id: "custom", label: "Individuell", hours: null, price: "auf Anfrage" },
 ];
 
-const availability: AvailabilitySlot[] = [
-  { date: "2026-06-25", label: "Mi, 25.06.", slots: ["09:00", "10:30", "13:00", "15:30"] },
-  { date: "2026-06-26", label: "Do, 26.06.", slots: ["08:30", "11:00", "14:00", "16:00"] },
-  { date: "2026-06-29", label: "So, 29.06.", slots: ["10:00", "12:30", "14:30"] },
-  { date: "2026-06-30", label: "Mo, 30.06.", slots: ["09:30", "11:30", "13:30", "15:00"] },
-];
+const generateAvailability = () => {
+  const today = new Date();
+  const dates: AvailabilitySlot[] = [];
+
+  for (let i = 0; i < 180; i += 1) {
+    const current = new Date(today);
+    current.setDate(today.getDate() + i);
+
+    if (current.getDay() === 0 || current.getDay() === 6) {
+      continue;
+    }
+
+    const isoDate = current.toISOString().slice(0, 10);
+    const label = current.toLocaleDateString("de-DE", {
+      weekday: "short",
+      day: "2-digit",
+      month: "2-digit",
+    });
+
+    const slots = ["09:00", "10:30", "13:00", "15:30"];
+    if (current.getDay() === 3) {
+      slots[0] = "08:30";
+    }
+
+    dates.push({ date: isoDate, label, slots });
+
+    if (dates.length >= 24) {
+      break;
+    }
+  }
+
+  return dates;
+};
+
+const availability = generateAvailability();
 
 const stepLabels = ["Termin", "Leistung", "Dauer", "Ihre Angaben"];
 
@@ -121,7 +152,7 @@ export default function BookingPage() {
     <>
       <PageHero
         eyebrow="Termin buchen"
-        title="Termin buchen"
+        title="Termin Buchen"
         description="Planen Sie Ihren Termin bequem online – persönlich, verständlich und ohne Stress."
       />
 
@@ -185,35 +216,45 @@ export default function BookingPage() {
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
                   {step === 1 && (
-                    <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
+                    <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
                       <div className="space-y-5">
                         <div>
-                          <h3 className="text-xl font-extrabold text-gray-900">Verfügbare Termine</h3>
+                          <h3 className="text-xl font-extrabold text-gray-900">Kalender</h3>
                           <p className="mt-2 text-base leading-relaxed text-gray-700">
-                            Wählen Sie ein Datum und eine Uhrzeit für Ihren gewünschten Besuch.
+                            Wählen Sie ein zukünftiges Datum. Danach erscheinen die verfügbaren Uhrzeiten.
                           </p>
                         </div>
-                        <div className="grid gap-3 sm:grid-cols-2">
-                          {availability.map((slot) => (
-                            <button
-                              key={slot.date}
-                              type="button"
-                              onClick={() => updateField("date", slot.date)}
-                              className={`rounded-2xl border p-4 text-left transition-all ${
-                                form.date === slot.date
-                                  ? "border-teal bg-teal-light shadow-sm"
-                                  : "border-grey-light bg-white hover:border-teal/40"
-                              }`}
-                            >
-                              <p className="font-bold text-gray-900">{slot.label}</p>
-                              <p className="mt-1 text-sm text-gray-600">Mehrere Uhrzeiten verfügbar</p>
-                            </button>
-                          ))}
+
+                        <div className="rounded-[1.5rem] border border-grey-light bg-white p-3 shadow-sm sm:p-4">
+                          <Calendar
+                            onChange={(value) => {
+                              if (value instanceof Date) {
+                                const isoDate = value.toISOString().slice(0, 10);
+                                updateField("date", isoDate);
+                                updateField("time", "");
+                              }
+                            }}
+                            value={form.date ? new Date(form.date) : undefined}
+                            minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
+                            maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
+                            locale="de-DE"
+                            className="w-full rounded-[1.25rem] border-0"
+                            tileClassName={({ date }) => {
+                              const isoDate = date.toISOString().slice(0, 10);
+                              const isSelected = form.date === isoDate;
+                              const isToday = date.toDateString() === new Date().toDateString();
+                              return `rounded-xl ${isSelected ? "bg-teal text-white" : ""} ${isToday ? "font-extrabold ring-2 ring-orange" : ""}`;
+                            }}
+                            prev2Label={null}
+                            next2Label={null}
+                          />
                         </div>
+
                         {selectedDate && (
-                          <div>
+                          <div className="rounded-[1.5rem] border border-grey-light bg-white p-5 shadow-sm">
                             <h4 className="text-lg font-bold text-gray-900">Verfügbare Uhrzeiten</h4>
-                            <div className="mt-3 flex flex-wrap gap-3">
+                            <p className="mt-1 text-sm text-gray-600">Bitte wählen Sie eine Uhrzeit für {selectedDate.label}.</p>
+                            <div className="mt-4 flex flex-wrap gap-3">
                               {selectedDate.slots.map((slot) => (
                                 <button
                                   key={slot}

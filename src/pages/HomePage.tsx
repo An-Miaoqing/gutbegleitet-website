@@ -176,7 +176,7 @@ export default function HomePage() {
             </div>
             <div className="overflow-hidden rounded-3xl shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1581579438747-1dc8d17bb276?auto=format&fit=crop&w=800&q=80"
+                src="/home-page-2.jpeg"
                 alt="Betreuerin geht gemeinsam mit einer Seniorin spazieren"
                 className="aspect-[4/3] w-full object-cover"
                 width={800}

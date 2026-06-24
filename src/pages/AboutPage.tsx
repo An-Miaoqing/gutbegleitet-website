@@ -65,6 +65,14 @@ export default function AboutPage() {
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-3xl px-4 text-center sm:px-6 lg:px-8">
           <SectionHeading title={forWhom.title} description={forWhom.text} />
+
+          <div className="mt-8 rounded-2xl border border-grey-light bg-white/80 p-5 shadow-sm sm:p-6">
+            <p className="text-base font-semibold text-teal">Registrierter Verein in Österreich</p>
+            <p className="mt-2 text-sm text-gray-700">ZVR-Zahl: 1429148037</p>
+            <a href="/impressum" className="mt-3 inline-flex text-sm font-semibold text-teal hover:text-teal-dark">
+              Zum Impressum
+            </a>
+          </div>
         </div>
       </section>
 

@@ -3,6 +3,12 @@ import Logo from "./Logo";
 import { contact, footerTrustItems, legalLinks, navLinks } from "../data/content";
 import { CheckIcon } from "./icons";
 
+const footerNavLinks = [
+  { label: "Impressum", href: "/impressum" },
+  { label: "Datenschutz", href: "/datenschutz" },
+  { label: "Kontakt", href: "/kontakt" },
+];
+
 function SocialIcon({ type }: { type: "facebook" | "instagram" }) {
   if (type === "facebook") {
     return (
@@ -105,9 +111,18 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 border-t border-grey-light pt-8 text-center">
-          <p className="text-base text-grey-soft">
-            &copy; {new Date().getFullYear()} Gut begleitet – Alltagshilfe für Senioren. Alle Rechte vorbehalten.
-          </p>
+          <div className="flex flex-wrap items-center justify-center gap-4 text-sm font-semibold text-gray-600 sm:gap-6">
+            {footerNavLinks.map((link) => (
+              <Link key={link.href} to={link.href} className="hover:text-teal">
+                {link.label}
+              </Link>
+            ))}
+          </div>
+          <div className="mt-4 space-y-1 text-base text-grey-soft">
+            <p>Gut begleitet – Verein für Alltagshilfe für Senioren</p>
+            <p>ZVR-Zahl 1429148037</p>
+            <p>&copy; {new Date().getFullYear()} Gut begleitet</p>
+          </div>
         </div>
       </div>
     </footer>
