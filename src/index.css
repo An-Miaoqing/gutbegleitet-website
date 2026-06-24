@@ -19,7 +19,8 @@
 }
 
 html {
-  scroll-behavior: smooth;
+  /* Disable smooth scroll so navigations open instantly at the top */
+  scroll-behavior: auto !important;
 }
 
 body {
