@@ -39,7 +39,7 @@ export default function HomePage() {
                   className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-orange px-7 py-4 text-lg font-bold text-white shadow-lg shadow-orange/30 transition-all hover:bg-orange-dark sm:w-auto"
                 >
                   <PhoneIcon />
-                  Kostenlose Erstberatung
+                  Termin buchen
                 </Link>
                 <Link
                   to="/leistungen"
@@ -54,11 +54,13 @@ export default function HomePage() {
               <div className="absolute -right-4 -top-4 hidden h-full w-full rounded-3xl bg-orange/15 sm:block" aria-hidden="true" />
               <div className="relative overflow-hidden rounded-3xl shadow-xl shadow-teal/10">
                 <img
-                  src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=900&q=80"
+                  src="/gut-begleitet-hero.jpeg"
                   alt="Betreuerin unterstützt eine Seniorin freundlich zu Hause"
                   className="aspect-[4/3] w-full object-cover"
                   width={900}
                   height={675}
+                  loading="eager"
+                  decoding="async"
                 />
               </div>
               <div className="absolute -bottom-4 -left-4 hidden max-w-[240px] rounded-2xl border border-grey-light bg-white p-4 shadow-lg sm:block">
@@ -107,7 +109,7 @@ export default function HomePage() {
             title="Warum Gut Begleitet?"
             description="Verlässlich. Persönlich. Gut begleitet."
           />
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             {whyUsItems.map((item, index) => (
               <article
                 key={item.title}

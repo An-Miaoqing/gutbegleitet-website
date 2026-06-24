@@ -59,7 +59,7 @@ export default function Header() {
             to="/beratung"
             className="inline-flex items-center rounded-full bg-orange px-5 py-3 text-base font-bold text-white shadow-md shadow-orange/25 transition-all hover:bg-orange-dark"
           >
-            Kostenlose Erstberatung
+            Termin buchen
           </Link>
         </div>
 
@@ -103,7 +103,7 @@ export default function Header() {
               to="/beratung"
               className="mt-2 flex items-center justify-center rounded-full bg-orange px-5 py-4 text-lg font-bold text-white"
             >
-              Kostenlose Erstberatung
+              Termin buchen
             </Link>
           </nav>
         </div>

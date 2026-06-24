@@ -30,7 +30,7 @@ export default function AboutPage() {
 
             <div className="overflow-hidden rounded-3xl shadow-lg">
               <img
-                src="https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?auto=format&fit=crop&w=800&q=80"
+                src="/about-us.jpeg"
                 alt="Betreuerin und Seniorin in vertrauensvollem Gespräch"
                 className="aspect-[4/3] w-full object-cover"
                 width={800}

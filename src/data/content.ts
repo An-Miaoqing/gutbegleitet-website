@@ -22,7 +22,7 @@ export const navLinks = [
   { label: "Über Uns", href: "/ueber-uns" },
   { label: "Leistungen", href: "/leistungen" },
   { label: "News & Events", href: "/news" },
-  { label: "Beratung buchen", href: "/beratung" },
+  { label: "Termin buchen", href: "/beratung" },
   { label: "Kontakt", href: "/kontakt" },
 ];
 
@@ -56,29 +56,34 @@ export const audienceGroups = [
 
 export const whyUsItems = [
   {
-    title: "Persönliche Betreuung",
-    description: "Wir nehmen uns Zeit, hören zu und richten uns nach Ihren Wünschen und Bedürfnissen.",
+    title: "Persönliche Betreuung mit Herz",
+    description: "Wir nehmen uns Zeit, hören zu und begleiten Sie mit Wärme, Würde und Verständnis.",
     icon: "heart",
   },
   {
-    title: "Zuverlässige Unterstützung im Alltag",
-    description: "Pünktlich, verbindlich und mit dem Anspruch, dass Sie sich auf uns verlassen können.",
+    title: "Zuverlässig und pünktlich",
+    description: "Sie können sich auf unsere Hilfe verlassen – zuverlässig, verbindlich und termingerecht.",
     icon: "shield",
   },
   {
-    title: "Flexible Terminvereinbarung",
-    description: "Ob regelmäßig oder punktuell – wir finden gemeinsam passende Zeiten.",
-    icon: "clock",
+    title: "Individuelle Unterstützung nach Bedarf",
+    description: "Ob kurzzeitig oder regelmäßig – wir passen uns flexibel an Ihre Lebenssituation an.",
+    icon: "star",
   },
   {
-    title: "Freundliche und respektvolle Begleitung",
-    description: "Mit Geduld, Wertschätzung und dem Gefühl, gut aufgehoben zu sein.",
+    title: "Respektvoller Umgang auf Augenhöhe",
+    description: "Wir begegnen Ihnen freundlich, zugewandt und mit großem Respekt in jedem Moment.",
     icon: "smile",
   },
   {
-    title: "Individuelle Lösungen für Ihre Bedürfnisse",
-    description: "Keine Standardpakete – sondern Betreuung, die zu Ihrem Leben passt.",
-    icon: "star",
+    title: "Flexible Terminvereinbarung",
+    description: "Wir finden gemeinsam passende Zeiten – ob spontan oder langfristig geplant.",
+    icon: "clock",
+  },
+  {
+    title: "Betreuung direkt bei Ihnen zuhause in Wien",
+    description: "Unterstützung dort, wo Sie sich am wohlsten fühlen: in Ihrem eigenen Zuhause.",
+    icon: "home",
   },
 ];
 

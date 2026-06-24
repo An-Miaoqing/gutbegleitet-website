@@ -30,7 +30,7 @@ export default function CTABanner() {
                 to="/beratung"
                 className="inline-flex w-full items-center justify-center rounded-full border-2 border-white px-8 py-4 text-lg font-bold text-white transition-colors hover:bg-white/10 sm:w-auto"
               >
-                Beratung anfragen
+                Termin buchen
               </Link>
             </div>
           </div>
