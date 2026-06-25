@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import { services } from "../data/services";
 import PageHero from "../components/PageHero";
 import CTABanner from "../components/CTABanner";
@@ -63,6 +64,44 @@ export default function ServicesPage() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="px-4 py-16 sm:px-6 sm:py-20 lg:px-8">
+        <div className="mx-auto max-w-5xl rounded-[2rem] border border-teal/10 bg-gradient-to-br from-white via-teal-light/40 to-orange-light/30 p-8 shadow-[0_20px_60px_-20px_rgba(15,139,141,0.25)] sm:p-10 lg:p-14">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-sm font-semibold uppercase tracking-[0.3em] text-teal">Preise</p>
+            <h2 className="mt-3 text-3xl font-extrabold text-teal sm:text-4xl">
+              Transparent, fair und ohne versteckte Kosten.
+            </h2>
+            <div className="mt-8 rounded-[1.75rem] border border-teal/10 bg-white/90 p-8 shadow-sm sm:p-10">
+              <p className="text-5xl font-black text-teal sm:text-6xl">25 € / Stunde</p>
+              <ul className="mx-auto mt-8 max-w-xl space-y-4 text-left text-lg text-gray-700">
+                {[
+                  "Persönliche Betreuung in Wien",
+                  "Keine versteckten Kosten",
+                  "Flexible Terminvereinbarung",
+                  "Wochen- und Monatspakete nach individueller Vereinbarung",
+                ].map((item) => (
+                  <li key={item} className="flex items-start gap-3 rounded-2xl bg-teal-light/50 px-4 py-3">
+                    <span className="mt-1 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal text-sm font-bold text-white">
+                      ✓
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-8 text-lg leading-relaxed text-gray-700">
+                Für regelmäßige Betreuung (wöchentlich oder monatlich) erstellen wir Ihnen gerne ein individuelles Angebot.
+              </p>
+              <Link
+                to="/beratung"
+                className="mt-8 inline-flex w-full items-center justify-center rounded-full bg-teal px-8 py-4 text-lg font-semibold text-white shadow-lg shadow-teal/25 transition hover:bg-teal-dark sm:w-auto"
+              >
+                Termin buchen
+              </Link>
+            </div>
           </div>
         </div>
       </div>
