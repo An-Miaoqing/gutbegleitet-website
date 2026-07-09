@@ -43,6 +43,12 @@ const services: BookingService[] = [
     icon: "chat",
   },
   {
+    id: "small-help",
+    title: "Kleine Hilfen im Alltag",
+    description: "Kleine Unterstützung im täglichen Leben, wie Einkaufen, Besorgungen, Begleitung oder sonstige Alltagshilfen.",
+    icon: "help",
+  },
+  {
     id: "help",
     title: "Individuelle Unterstützung",
     description: "Maßgeschneiderte Hilfe für Ihren Alltag.",
@@ -51,9 +57,9 @@ const services: BookingService[] = [
 ];
 
 const durations: BookingDuration[] = [
-  { id: "2h", label: "2 Stunden", hours: 2, price: "ab 70 €" },
-  { id: "4h", label: "4 Stunden", hours: 4, price: "ab 140 €" },
-  { id: "6h", label: "6 Stunden", hours: 6, price: "ab 210 €" },
+  { id: "2h", label: "2 Stunden", hours: 2, price: "ab 50 €" },
+  { id: "4h", label: "4 Stunden", hours: 4, price: "ab 100 €" },
+  { id: "6h", label: "6 Stunden", hours: 6, price: "ab 150 €" },
   { id: "custom", label: "Individuell", hours: null, price: "auf Anfrage" },
 ];
 
@@ -159,6 +165,31 @@ export default function BookingPage() {
       <section className="py-16 sm:py-20">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-5xl rounded-[2rem] border border-grey-light bg-white p-5 shadow-xl shadow-teal/10 sm:p-8 lg:p-10">
+            <div className="mb-6 rounded-[1.5rem] border border-amber-200 bg-amber-50 p-5 shadow-sm sm:p-6">
+              <div className="flex items-start gap-3">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-700">
+                  <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" strokeWidth={1.75} stroke="currentColor" aria-hidden="true">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 01-1.063.852l-.041-.02a.75.75 0 01-.852-1.063l.708-2.836a.75.75 0 01.852-1.063zM12 2.25a.75.75 0 01.75.75v.75h-1.5V3A.75.75 0 0112 2.25zm0 3.75a.75.75 0 00-.75.75v.75h1.5V6.75A.75.75 0 0012 6zm0 3.75a.75.75 0 00-.75.75v.75h1.5v-.75A.75.75 0 0012 9.75zm0 3.75a.75.75 0 00-.75.75v.75h1.5v-.75A.75.75 0 0012 13.5z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-extrabold text-gray-900">Wichtiger Hinweis</h3>
+                  <p className="mt-2 text-base leading-relaxed text-gray-700">
+                    Unsere Online-Terminbuchung befindet sich derzeit noch im Aufbau.
+                  </p>
+                  <p className="mt-2 text-base leading-relaxed text-gray-700">
+                    Bitte vereinbaren Sie Ihren Termin telefonisch unter:
+                  </p>
+                  <a href="tel:+4368110194236" className="mt-3 inline-flex items-center rounded-full bg-white px-4 py-2 text-base font-bold text-orange shadow-sm transition-colors hover:bg-orange-light">
+                    +43 681 1019 4236
+                  </a>
+                  <p className="mt-3 text-base leading-relaxed text-gray-700">
+                    Vielen Dank für Ihr Verständnis.
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="rounded-[1.5rem] border border-grey-light bg-teal-light/70 p-6 sm:p-8">
               <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
                 <div>
