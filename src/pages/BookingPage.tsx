@@ -1,6 +1,7 @@
 import { useMemo, useState, type FormEvent } from "react";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
+import { BookingApiError, createBooking, type CreateBookingRequest } from "../api/booking";
 import PageHero from "../components/PageHero";
 import { ServiceIcon } from "../components/icons";
 import type { AvailabilitySlot, BookingDuration, BookingFormData, BookingService, BookingStep } from "../types/booking";
@@ -8,48 +9,56 @@ import type { AvailabilitySlot, BookingDuration, BookingFormData, BookingService
 const services: BookingService[] = [
   {
     id: "shopping",
+    serviceCode: "SHOPPING",
     title: "Einkaufen und Besorgungen",
     description: "Sicheres Einkaufen und Mitbringen von notwendigen Dingen.",
     icon: "shopping",
   },
   {
     id: "home",
+    serviceCode: "HOUSEKEEPING",
     title: "Unterstützung im Haushalt",
     description: "Ordnung, Aufräumen und kleine Hilfe im Alltag.",
     icon: "home",
   },
   {
     id: "laundry",
+    serviceCode: "LAUNDRY",
     title: "Wäsche-Service",
     description: "Wäsche sammeln, waschen und ordentlich zusammenlegen.",
     icon: "laundry",
   },
   {
     id: "medical",
-    title: "Arztbegleitung",
+    serviceCode: "MEDICAL_ESCORT",
+    title: "Begleitung zu Arztterminen",
     description: "Begleitung zu Terminen und wichtigen Kontakten.",
     icon: "medical",
   },
   {
     id: "walk",
+    serviceCode: "LEISURE_COMPANIONSHIP",
     title: "Spaziergänge und Freizeitbegleitung",
     description: "Gemeins frische Luft und etwas Bewegung genießen.",
     icon: "walk",
   },
   {
     id: "chat",
+    serviceCode: "SOCIAL_COMPANIONSHIP",
     title: "Gesellschaft und Aktivierung",
     description: "Anregende Gespräche, gemeinsame Aktivitäten und Begleitung.",
     icon: "chat",
   },
   {
     id: "small-help",
+    serviceCode: "SMALL_DAILY_HELP",
     title: "Kleine Hilfen im Alltag",
     description: "Kleine Unterstützung im täglichen Leben, wie Einkaufen, Besorgungen, Begleitung oder sonstige Alltagshilfen.",
     icon: "help",
   },
   {
     id: "help",
+    serviceCode: "CUSTOM_SUPPORT",
     title: "Individuelle Unterstützung",
     description: "Maßgeschneiderte Hilfe für Ihren Alltag.",
     icon: "help",
@@ -104,31 +113,79 @@ const stepLabels = ["Termin", "Leistung", "Dauer", "Ihre Angaben"];
 const initialForm: BookingFormData = {
   date: "",
   time: "",
-  service: "",
-  duration: "",
+  serviceCode: "",
+  durationId: "",
   firstName: "",
   lastName: "",
   phone: "",
   email: "",
-  address: "",
-  zip: "",
+  street: "",
+  houseNumber: "",
+  apartment: "",
+  postalCode: "",
   city: "",
-  message: "",
-  consent: false,
+  customerNote: "",
+  privacyAccepted: false,
+  privacyAcceptedAt: null,
+};
+
+const COMPANY_ZVR_NUMBER = "1429148037";
+
+const buildAppointmentDateTime = (date: string, time: string) => {
+  if (!date || !time) {
+    return "";
+  }
+
+  const [hours, minutes] = time.split(":").map(Number);
+  const [year, month, day] = date.split("-").map(Number);
+  const appointmentDate = new Date(year, month - 1, day, hours, minutes, 0, 0);
+
+  return appointmentDate.toISOString();
+};
+
+const isValidEmail = (email: string) => {
+  if (!email) {
+    return true;
+  }
+
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 };
 
 export default function BookingPage() {
   const [step, setStep] = useState<BookingStep>(1);
   const [form, setForm] = useState<BookingFormData>(initialForm);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const selectedDate = useMemo(
     () => availability.find((slot) => slot.date === form.date),
     [form.date],
   );
+  const selectedService = useMemo(
+    () => services.find((service) => service.serviceCode === form.serviceCode),
+    [form.serviceCode],
+  );
+  const selectedDuration = useMemo(
+    () => durations.find((duration) => duration.id === form.durationId),
+    [form.durationId],
+  );
+  const appointmentDateTime = useMemo(
+    () => buildAppointmentDateTime(form.date, form.time),
+    [form.date, form.time],
+  );
 
-  const updateField = (field: keyof BookingFormData, value: string | boolean) => {
+  const updateField = (field: keyof BookingFormData, value: string | boolean | null) => {
     setForm((prev) => ({ ...prev, [field]: value }));
+    setErrors((prev) => {
+      if (!prev[field]) {
+        return prev;
+      }
+
+      const nextErrors = { ...prev };
+      delete nextErrors[field];
+      return nextErrors;
+    });
   };
 
   const isStepValid = () => {
@@ -136,22 +193,123 @@ export default function BookingPage() {
       case 1:
         return Boolean(form.date && form.time);
       case 2:
-        return Boolean(form.service);
+        return Boolean(form.serviceCode);
       case 3:
-        return Boolean(form.duration);
+        return Boolean(form.durationId);
       case 4:
-        return Boolean(form.firstName && form.lastName && form.phone && form.consent);
+        return Boolean(form.firstName && form.lastName && form.phone && form.street && form.houseNumber && form.postalCode && form.city && form.serviceCode && form.durationId && form.date && form.time && form.privacyAccepted);
       default:
         return false;
     }
   };
 
-  const handleSubmit = (event: FormEvent) => {
+  const validateForm = () => {
+    const nextErrors: Record<string, string> = {};
+
+    if (!form.firstName.trim()) {
+      nextErrors.firstName = "Bitte geben Sie Ihren Vornamen ein.";
+    }
+    if (!form.lastName.trim()) {
+      nextErrors.lastName = "Bitte geben Sie Ihren Nachnamen ein.";
+    }
+    if (!form.phone.trim()) {
+      nextErrors.phone = "Bitte geben Sie Ihre Telefonnummer ein.";
+    }
+    if (!form.street.trim()) {
+      nextErrors.street = "Bitte geben Sie Ihre Straße ein.";
+    }
+    if (!form.houseNumber.trim()) {
+      nextErrors.houseNumber = "Bitte geben Sie Ihre Hausnummer ein.";
+    }
+    if (!form.postalCode.trim()) {
+      nextErrors.postalCode = "Bitte geben Sie Ihre Postleitzahl ein.";
+    }
+    if (!form.city.trim()) {
+      nextErrors.city = "Bitte geben Sie Ihren Ort ein.";
+    }
+    if (!form.serviceCode) {
+      nextErrors.serviceCode = "Bitte wählen Sie eine Leistung aus.";
+    }
+    if (!form.durationId) {
+      nextErrors.durationId = "Bitte wählen Sie eine Dauer aus.";
+    }
+    if (!form.date || !form.time) {
+      nextErrors.appointment = "Bitte wählen Sie einen Termin aus.";
+    }
+    if (!form.privacyAccepted) {
+      nextErrors.privacyAccepted = "Bitte akzeptieren Sie die Datenschutzerklärung.";
+    }
+    if (!isValidEmail(form.email)) {
+      nextErrors.email = "Bitte geben Sie eine gültige E-Mail-Adresse ein.";
+    }
+
+    return nextErrors;
+  };
+
+  const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    if (!isStepValid()) {
+
+    if (isSubmitting) {
       return;
     }
-    setSubmitted(true);
+
+    const nextErrors = validateForm();
+    setErrors(nextErrors);
+
+    if (Object.keys(nextErrors).length > 0) {
+      return;
+    }
+
+    if (!selectedDuration?.hours) {
+      setErrors({
+        durationId: "Bitte wählen Sie eine konkrete Dauer aus.",
+      });
+      return;
+    }
+
+    const customerNote = [
+      form.customerNote.trim(),
+      appointmentDateTime ? `Gewünschter Termin: ${appointmentDateTime}` : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    const bookingPayload: CreateBookingRequest = {
+      companyZvrNumber: COMPANY_ZVR_NUMBER,
+      serviceCode: form.serviceCode,
+      hours: selectedDuration.hours,
+      ...(customerNote ? { customerNote } : {}),
+      household: {
+        name: `Haushalt ${form.lastName.trim()}`,
+        street: form.street.trim(),
+        houseNumber: form.houseNumber.trim(),
+        apartment: form.apartment.trim() || undefined,
+        postalCode: form.postalCode.trim(),
+        city: form.city.trim(),
+      },
+      client: {
+        firstName: form.firstName.trim(),
+        lastName: form.lastName.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim() || undefined,
+      },
+    };
+
+    try {
+      setIsSubmitting(true);
+      await createBooking(bookingPayload);
+      setForm(initialForm);
+      setSubmitted(true);
+    } catch (error) {
+      setErrors({
+        form:
+          error instanceof BookingApiError
+            ? error.message
+            : "Derzeit kann keine Anfrage gesendet werden. Bitte versuchen Sie es später erneut.",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -246,6 +404,12 @@ export default function BookingPage() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-8">
+                  {errors.form && (
+                    <div className="rounded-2xl border border-red-200 bg-red-50 px-5 py-4 text-sm font-semibold text-red-700">
+                      {errors.form}
+                    </div>
+                  )}
+
                   {step === 1 && (
                     <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
                       <div className="space-y-5">
@@ -328,9 +492,9 @@ export default function BookingPage() {
                           <button
                             key={service.id}
                             type="button"
-                            onClick={() => updateField("service", service.id)}
+                            onClick={() => updateField("serviceCode", service.serviceCode)}
                             className={`rounded-[1.5rem] border p-5 text-left transition-all ${
-                              form.service === service.id
+                              form.serviceCode === service.serviceCode
                                 ? "border-teal bg-teal-light shadow-sm"
                                 : "border-grey-light bg-white hover:border-teal/40"
                             }`}
@@ -358,9 +522,9 @@ export default function BookingPage() {
                         <button
                           key={duration.id}
                           type="button"
-                          onClick={() => updateField("duration", duration.id)}
+                          onClick={() => updateField("durationId", duration.id)}
                           className={`rounded-[1.5rem] border p-6 text-left transition-all ${
-                            form.duration === duration.id
+                            form.durationId === duration.id
                               ? "border-orange bg-orange-light/60 shadow-sm"
                               : "border-grey-light bg-white hover:border-orange/40"
                           }`}
@@ -385,32 +549,34 @@ export default function BookingPage() {
                     <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
                       <div className="grid gap-4 sm:grid-cols-2">
                         <label className="text-sm font-semibold text-gray-700">
-                          <span className="mb-2 block">Vorname</span>
+                          <span className="mb-2 block">Vorname *</span>
                           <input
                             value={form.firstName}
                             onChange={(event) => updateField("firstName", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="Max"
                           />
+                          {errors.firstName && <p className="mt-2 text-sm text-red-600">{errors.firstName}</p>}
                         </label>
                         <label className="text-sm font-semibold text-gray-700">
-                          <span className="mb-2 block">Nachname</span>
+                          <span className="mb-2 block">Nachname *</span>
                           <input
                             value={form.lastName}
                             onChange={(event) => updateField("lastName", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="Mustermann"
                           />
+                          {errors.lastName && <p className="mt-2 text-sm text-red-600">{errors.lastName}</p>}
                         </label>
                         <label className="text-sm font-semibold text-gray-700">
-                          <span className="mb-2 block">Telefonnummer</span>
+                          <span className="mb-2 block">Telefonnummer *</span>
                           <input
-                            required
                             value={form.phone}
                             onChange={(event) => updateField("phone", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="+43 660 123 4567"
                           />
+                          {errors.phone && <p className="mt-2 text-sm text-red-600">{errors.phone}</p>}
                         </label>
                         <label className="text-sm font-semibold text-gray-700">
                           <span className="mb-2 block">E-Mail-Adresse</span>
@@ -421,40 +587,63 @@ export default function BookingPage() {
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="name@email.com"
                           />
+                          {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email}</p>}
                         </label>
-                        <label className="text-sm font-semibold text-gray-700 sm:col-span-2">
-                          <span className="mb-2 block">Wohnadresse</span>
+                        <label className="text-sm font-semibold text-gray-700">
+                          <span className="mb-2 block">Straße *</span>
                           <input
-                            value={form.address}
-                            onChange={(event) => updateField("address", event.target.value)}
+                            value={form.street}
+                            onChange={(event) => updateField("street", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
-                            placeholder="Beispielstraße 12"
+                            placeholder="Beispielstraße"
+                          />
+                          {errors.street && <p className="mt-2 text-sm text-red-600">{errors.street}</p>}
+                        </label>
+                        <label className="text-sm font-semibold text-gray-700">
+                          <span className="mb-2 block">Hausnummer *</span>
+                          <input
+                            value={form.houseNumber}
+                            onChange={(event) => updateField("houseNumber", event.target.value)}
+                            className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
+                            placeholder="12"
+                          />
+                          {errors.houseNumber && <p className="mt-2 text-sm text-red-600">{errors.houseNumber}</p>}
+                        </label>
+                        <label className="text-sm font-semibold text-gray-700">
+                          <span className="mb-2 block">Stiege / Tür (optional)</span>
+                          <input
+                            value={form.apartment}
+                            onChange={(event) => updateField("apartment", event.target.value)}
+                            className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
+                            placeholder="2 / 3"
                           />
                         </label>
                         <label className="text-sm font-semibold text-gray-700">
-                          <span className="mb-2 block">PLZ</span>
+                          <span className="mb-2 block">PLZ *</span>
                           <input
-                            value={form.zip}
-                            onChange={(event) => updateField("zip", event.target.value)}
+                            value={form.postalCode}
+                            onChange={(event) => updateField("postalCode", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="1010"
                           />
+                          {errors.postalCode && <p className="mt-2 text-sm text-red-600">{errors.postalCode}</p>}
                         </label>
                         <label className="text-sm font-semibold text-gray-700">
-                          <span className="mb-2 block">Ort</span>
+                          <span className="mb-2 block">Ort *</span>
                           <input
                             value={form.city}
                             onChange={(event) => updateField("city", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="Wien"
                           />
+                          {errors.city && <p className="mt-2 text-sm text-red-600">{errors.city}</p>}
                         </label>
                         <label className="text-sm font-semibold text-gray-700 sm:col-span-2">
                           <span className="mb-2 block">Nachricht</span>
                           <textarea
                             rows={4}
-                            value={form.message}
-                            onChange={(event) => updateField("message", event.target.value)}
+                            value={form.customerNote}
+                            onChange={(event) => updateField("customerNote", event.target.value)}
                             className="w-full rounded-2xl border border-grey-light bg-white px-4 py-3 text-base text-gray-900 outline-none ring-0 transition focus:border-teal"
                             placeholder="Bitte teilen Sie uns weitere Hinweise mit."
                           />
@@ -470,23 +659,41 @@ export default function BookingPage() {
                           </div>
                           <div className="rounded-2xl bg-white p-4">
                             <p className="font-semibold text-gray-900">Leistung</p>
-                            <p className="mt-1">{services.find((item) => item.id === form.service)?.title ?? "Noch offen"}</p>
+                            <p className="mt-1">{selectedService?.title ?? "Noch offen"}</p>
                           </div>
                           <div className="rounded-2xl bg-white p-4">
                             <p className="font-semibold text-gray-900">Dauer</p>
-                            <p className="mt-1">{durations.find((item) => item.id === form.duration)?.label ?? "Noch offen"}</p>
+                            <p className="mt-1">{selectedDuration?.label ?? "Noch offen"}</p>
+                          </div>
+                          <div className="rounded-2xl bg-white p-4">
+                            <p className="font-semibold text-gray-900">Adresse</p>
+                            <p className="mt-1">
+                              {form.street || form.houseNumber
+                                ? `${[form.street, form.houseNumber].filter(Boolean).join(" ")}`
+                                : "Noch offen"}
+                            </p>
+                            <p className="mt-1">
+                              {form.postalCode || form.city
+                                ? `${[form.postalCode, form.city].filter(Boolean).join(" ")}`
+                                : ""}
+                            </p>
                           </div>
                         </div>
 
                         <label className="mt-6 flex items-start gap-3 rounded-2xl bg-white p-4 text-sm leading-relaxed text-gray-700">
                           <input
                             type="checkbox"
-                            checked={form.consent}
-                            onChange={(event) => updateField("consent", event.target.checked)}
+                            checked={form.privacyAccepted}
+                            onChange={(event) => {
+                              const isAccepted = event.target.checked;
+                              updateField("privacyAccepted", isAccepted);
+                              updateField("privacyAcceptedAt", isAccepted ? new Date().toISOString() : null);
+                            }}
                             className="mt-1 h-4 w-4 rounded border-gray-300 text-teal focus:ring-teal"
                           />
                           <span>Ich stimme der Datenschutzerklärung zu.</span>
                         </label>
+                        {errors.privacyAccepted && <p className="mt-2 text-sm text-red-600">{errors.privacyAccepted}</p>}
                       </div>
                     </div>
                   )}
@@ -516,9 +723,10 @@ export default function BookingPage() {
                       ) : (
                         <button
                           type="submit"
-                          className="rounded-full bg-orange px-7 py-3 text-lg font-bold text-white shadow-lg shadow-orange/30 transition-colors hover:bg-orange-dark"
+                          disabled={!form.privacyAccepted || isSubmitting}
+                          className="rounded-full bg-orange px-7 py-3 text-lg font-bold text-white shadow-lg shadow-orange/30 transition-colors hover:bg-orange-dark disabled:cursor-not-allowed disabled:bg-gray-300"
                         >
-                          Termin anfragen
+                          {isSubmitting ? "Anfrage wird gesendet..." : "Termin anfragen"}
                         </button>
                       )}
                     </div>
