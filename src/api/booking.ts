@@ -33,13 +33,21 @@ export class BookingApiError extends Error {
   }
 }
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 export async function createBooking(
   payload: CreateBookingRequest,
 ): Promise<CreateBookingResponse> {
   let response: Response;
 
+  if (!API_URL) {
+    throw new BookingApiError(
+      "Derzeit kann keine Anfrage gesendet werden. Bitte versuchen Sie es später erneut.",
+    );
+  }
+
   try {
-    response = await fetch("http://localhost:3000/api/bookings", {
+    response = await fetch(`${API_URL}/api/bookings`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
