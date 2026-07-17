@@ -12,6 +12,7 @@ export default defineConfig(({ command, mode }) => {
   }
 
   return {
+    envDir: ".",
     plugins: [react(), tailwindcss()],
   };
 });
