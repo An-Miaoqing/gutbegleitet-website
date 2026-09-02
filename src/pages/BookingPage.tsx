@@ -72,6 +72,20 @@ const durations: BookingDuration[] = [
   { id: "custom", label: "Individuell", hours: null, price: "auf Anfrage" },
 ];
 
+const formatLocalDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+};
+
+const parseLocalDate = (date: string) => {
+  const [year, month, day] = date.split("-").map(Number);
+
+  return new Date(year, month - 1, day);
+};
+
 const generateAvailability = () => {
   const today = new Date();
   const dates: AvailabilitySlot[] = [];
@@ -84,7 +98,7 @@ const generateAvailability = () => {
       continue;
     }
 
-    const isoDate = current.toISOString().slice(0, 10);
+    const isoDate = formatLocalDate(current);
     const label = current.toLocaleDateString("de-DE", {
       weekday: "short",
       day: "2-digit",
@@ -331,18 +345,15 @@ export default function BookingPage() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-extrabold text-gray-900">Wichtiger Hinweis</h3>
+                  <h3 className="text-xl font-extrabold text-gray-900">Termin vereinbaren</h3>
                   <p className="mt-2 text-base leading-relaxed text-gray-700">
-                    Unsere Online-Terminbuchung befindet sich derzeit noch im Aufbau.
-                  </p>
-                  <p className="mt-2 text-base leading-relaxed text-gray-700">
-                    Bitte vereinbaren Sie Ihren Termin telefonisch unter:
+                    Buchen Sie Ihren Termin bequem online über das Formular oder vereinbaren Sie ihn telefonisch unter:
                   </p>
                   <a href="tel:+4368110194236" className="mt-3 inline-flex items-center rounded-full bg-white px-4 py-2 text-base font-bold text-orange shadow-sm transition-colors hover:bg-orange-light">
                     +43 681 1019 4236
                   </a>
                   <p className="mt-3 text-base leading-relaxed text-gray-700">
-                    Vielen Dank für Ihr Verständnis.
+                    Wählen Sie einfach die Möglichkeit, die für Sie am besten passt.
                   </p>
                 </div>
               </div>
@@ -424,18 +435,18 @@ export default function BookingPage() {
                           <Calendar
                             onChange={(value) => {
                               if (value instanceof Date) {
-                                const isoDate = value.toISOString().slice(0, 10);
+                                const isoDate = formatLocalDate(value);
                                 updateField("date", isoDate);
                                 updateField("time", "");
                               }
                             }}
-                            value={form.date ? new Date(form.date) : undefined}
+                            value={form.date ? parseLocalDate(form.date) : undefined}
                             minDate={new Date(new Date().setDate(new Date().getDate() + 1))}
                             maxDate={new Date(new Date().setMonth(new Date().getMonth() + 3))}
                             locale="de-DE"
                             className="w-full rounded-[1.25rem] border-0"
                             tileClassName={({ date }) => {
-                              const isoDate = date.toISOString().slice(0, 10);
+                              const isoDate = formatLocalDate(date);
                               const isSelected = form.date === isoDate;
                               const isToday = date.toDateString() === new Date().toDateString();
                               return `rounded-xl ${isSelected ? "bg-teal text-white" : ""} ${isToday ? "font-extrabold ring-2 ring-orange" : ""}`;
