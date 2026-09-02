@@ -19,7 +19,7 @@ export default function Logo({ className = "", showText = true }: LogoProps) {
             <span className="text-orange">Gut </span>
             <span className="text-teal">begleitet</span>
           </p>
-          <p className="text-xs font-semibold text-teal sm:text-sm">Alltagshilfe für Senioren</p>
+          <p className="text-xs font-semibold text-teal sm:text-sm">Alltagshilfe für Senior:innen</p>
         </div>
       )}
     </div>

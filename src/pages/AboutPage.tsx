@@ -11,7 +11,12 @@ export default function AboutPage() {
       <PageHero
         eyebrow="Über Uns"
         title={welcome.title}
-        description={welcome.intro}
+        description={
+          <>
+            Viele Menschen brauchen keine Pflege – sondern <strong>Hilfe</strong>. Beim <strong>Einkaufen</strong>, beim{" "}
+            <strong>Arzttermin</strong>, im <strong>Haushalt</strong>, oder einfach <strong>jemanden, der da ist.</strong>
+          </>
+        }
       />
 
       <section className="py-16 sm:py-20">
@@ -19,7 +24,20 @@ export default function AboutPage() {
           <div className="grid items-start gap-12 lg:grid-cols-2">
             <div>
               <SectionHeading align="left" title={mission.title} />
-              <p className="mt-6 text-lg leading-relaxed text-gray-700">{mission.text}</p>
+              <div className="mt-6 space-y-5 text-lg leading-relaxed text-gray-700">
+                <p>
+                  <strong>Gut Begleitet</strong> ist genau diese Unterstützung: menschlich, verlässlich und auf Ihre Situation
+                  abgestimmt. Wir sind die Brücke zwischen vollständiger Selbstständigkeit und professioneller Pflege – für
+                  alle, die im Alltag Unterstützung brauchen, ohne in ein Pflegeheim wechseln zu müssen.
+                </p>
+                <p>
+                  <strong>Gut Begleitet</strong> ist ein 2026 gegründeter, eingetragener <strong>Non-Profit-Verein</strong>. Ein
+                  Teil unserer Begleiter:innen sind ukrainische Geflüchtete, denen wir über unsere Arbeit ein geregeltes
+                  Einkommen, Versicherung, ergänzende Deutschkurse, einen Erste-Hilfe-Kurs und Integration ermöglichen – Sie
+                  unterstützen also nicht nur sich selbst oder Ihre Angehörigen, sondern auch diesen Weg in ein neues Leben in
+                  Österreich.
+                </p>
+              </div>
 
               <blockquote className="mt-8 border-l-4 border-orange pl-5">
                 <p className="font-script text-3xl leading-snug text-teal sm:text-4xl">
@@ -30,7 +48,7 @@ export default function AboutPage() {
 
             <div className="overflow-hidden rounded-3xl shadow-lg">
               <img
-                src="/about-us.jpeg"
+                src="/team copy.jpg"
                 alt="Betreuerin und Seniorin in vertrauensvollem Gespräch"
                 className="aspect-[4/3] w-full object-cover"
                 width={800}

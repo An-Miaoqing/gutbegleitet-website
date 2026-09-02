@@ -20,7 +20,7 @@ export default function HomePage() {
               </div>
 
               <h1 className="text-3xl font-extrabold leading-tight text-teal sm:text-4xl lg:text-[2.65rem] lg:leading-[1.15]">
-                Alltagshilfe und Begleitung für Senioren in Wien
+                Alltagshilfe und Begleitung für Senior:innen in Wien
               </h1>
 
               <p className="mt-5 text-xl font-semibold leading-relaxed text-gray-800 sm:text-2xl">

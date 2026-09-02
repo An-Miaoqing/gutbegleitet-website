@@ -12,12 +12,12 @@ export const newsArticles: NewsArticle[] = [
   {
     id: "1",
     slug: "neues-angebot-fuer-senioren",
-    title: "Neues Angebot für Senioren",
+    title: "Neues Angebot für Senior:innen",
     date: "2026-05-15",
     excerpt:
-      "Ab sofort bieten wir erweiterte Alltagshilfe-Pakete für Senioren und deren Angehörige in ganz Wien an.",
+      "Ab sofort bieten wir erweiterte Alltagshilfe-Pakete für Senior:innen und deren Angehörige in ganz Wien an.",
     content:
-      "Wir freuen uns, Ihnen unser erweitertes Angebot vorstellen zu dürfen. Ab sofort stehen Senioren und deren Angehörige in ganz Wien flexible Betreuungspakete zur Verfügung – individuell abgestimmt auf Ihre Bedürfnisse. Ob regelmäßige Alltagshilfe oder punktuelle Unterstützung: Wir beraten Sie gerne kostenlos und unverbindlich.",
+      "Wir freuen uns, Ihnen unser erweitertes Angebot vorstellen zu dürfen. Ab sofort stehen Senior:innen und deren Angehörige in ganz Wien flexible Betreuungspakete zur Verfügung – individuell abgestimmt auf Ihre Bedürfnisse. Ob regelmäßige Alltagshilfe oder punktuelle Unterstützung: Wir beraten Sie gerne kostenlos und unverbindlich.",
     tag: "Angebot",
   },
   {
@@ -37,9 +37,9 @@ export const newsArticles: NewsArticle[] = [
     title: "Freiwillige gesucht",
     date: "2026-04-10",
     excerpt:
-      "Werden Sie Teil unseres Teams und schenken Sie Senioren Zeit, Aufmerksamkeit und Gesellschaft.",
+      "Werden Sie Teil unseres Teams und schenken Sie Senior:innen Zeit, Aufmerksamkeit und Gesellschaft.",
     content:
-      "Sie möchten Senioren im Alltag unterstützen und dabei etwas Sinnvolles tun? Wir suchen engagierte Freiwillige, die mit Herz und Zeit Menschen begleiten möchten. Ob regelmäßig oder gelegentlich – wir freuen uns auf Ihre Nachricht.",
+      "Sie möchten Senior:innen im Alltag unterstützen und dabei etwas Sinnvolles tun? Wir suchen engagierte Freiwillige, die mit Herz und Zeit Menschen begleiten möchten. Ob regelmäßig oder gelegentlich – wir freuen uns auf Ihre Nachricht.",
     tag: "Mitmachen",
   },
 ];

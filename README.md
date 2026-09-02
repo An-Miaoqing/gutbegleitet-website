@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-CareOS Website is the public-facing website for **Gut begleitet – Verein für Alltagshilfe für Senioren**.
+CareOS Website is the public-facing website for **Gut begleitet – Verein für Alltagshilfe für Senior:innen**.
 
 The website allows visitors to:
 

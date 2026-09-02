@@ -11,7 +11,7 @@ export default function ImpressumPage() {
           <div className="rounded-[2rem] border border-grey-light bg-white p-8 shadow-sm sm:p-10 lg:p-12">
             <div className="space-y-8">
               <div>
-                <h2 className="text-2xl font-bold text-teal">Gut begleitet – Verein für Alltagshilfe für Senioren</h2>
+                <h2 className="text-2xl font-bold text-teal">Gut begleitet – Verein für Alltagshilfe für Senior:innen</h2>
                 <div className="mt-4 space-y-2 text-lg leading-relaxed text-gray-700">
                   <p>
                     <span className="font-semibold text-gray-900">ZVR-Zahl:</span> 1429148037

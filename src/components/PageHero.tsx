@@ -1,6 +1,8 @@
+import type { ReactNode } from "react";
+
 type PageHeroProps = {
   title: string;
-  description?: string;
+  description?: ReactNode;
   eyebrow?: string;
 };
 

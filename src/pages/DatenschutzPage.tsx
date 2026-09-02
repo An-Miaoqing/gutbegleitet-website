@@ -13,7 +13,7 @@ export default function DatenschutzPage() {
               <div>
                 <h2 className="text-2xl font-bold text-teal">1. Verantwortlicher</h2>
                 <p className="mt-4">
-                  Gut begleitet – Verein für Alltagshilfe für Senioren
+                  Gut begleitet – Verein für Alltagshilfe für Senior:innen
                   <br />
                   ZVR-Zahl: 1429148037
                   <br />

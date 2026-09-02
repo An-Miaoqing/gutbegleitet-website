@@ -16,7 +16,7 @@ export default function LegalPage({ title, type }: LegalPageProps) {
             {type === "impressum" ? (
               <>
                 <p>
-                  <strong className="text-gray-900">Gut begleitet – Alltagshilfe für Senioren</strong>
+                  <strong className="text-gray-900">Gut begleitet – Alltagshilfe für Senior:innen</strong>
                   <br />
                   Bösendorferstraße 4/24/180
                   <br />

@@ -45,7 +45,7 @@ export default function Footer() {
               <Logo />
             </Link>
             <p className="mt-4 max-w-xs text-base leading-relaxed text-gray-700">
-              Alltagshilfe und Begleitung für Senioren in Wien – persönlich, verlässlich und mit Herz.
+              Alltagshilfe und Begleitung für Senior:innen in Wien – persönlich, verlässlich und mit Herz.
             </p>
             <div className="mt-6 flex gap-3">
               <a
@@ -119,7 +119,7 @@ export default function Footer() {
             ))}
           </div>
           <div className="mt-4 space-y-1 text-base text-grey-soft">
-            <p>Gut begleitet – Verein für Alltagshilfe für Senioren</p>
+            <p>Gut begleitet – Verein für Alltagshilfe für Senior:innen</p>
             <p>ZVR-Zahl 1429148037</p>
             <p>&copy; {new Date().getFullYear()} Gut begleitet</p>
           </div>
